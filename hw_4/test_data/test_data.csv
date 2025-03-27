@@ -1,0 +1,6 @@
+endpoint,method,expected_status,expected_content
+/breeds/list/all,GET,200,application/json
+/breeds/image/random,GET,200,application/json
+/breed/bulldog/images,GET,200,application/json
+/breed/bulldog/list,GET,200,application/json
+/breed/bulldog/images/random,GET,200,application/json
