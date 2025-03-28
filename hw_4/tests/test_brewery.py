@@ -1,9 +1,43 @@
-import requests
 import pytest
+import requests
 from pytest import param
+from pydantic import BaseModel, Field
+from typing import Dict, List, Union, Optional
 from jsonschema import validate
 
 
+class Brewery(BaseModel):
+    id: str = Field(str, description='Required field')
+    name: str = Field(str, description='Required field')
+    brewery_type: str = Field(str, description='Required field')
+    address_1: Optional[str]
+    address_2: Optional[str]
+    address_3: Optional[str]
+    city: str = Field(str, description='Required field')
+    state_province: str = Field(str, description='Required field')
+    postal_code: Optional[str]
+    country: str = Field(str, description='Required field')
+    longitude: Optional[str]
+    latitude: Optional[str]
+    phone: Optional[str]
+    website_url: Optional[str]
+    state: str = Field(str, description='Required field')
+    street: Optional[str]
+
+
+@pytest.mark.smoke
+def test_list_breweries(brewery_base_url):
+    default_breweries = 50
+    response = requests.get(brewery_base_url)
+    response_json = response.json()
+    breweries_model = [Brewery(**brewery) for brewery in response_json]
+    assert response.status_code == 200, f"The actual status code {response.status_code} != 200"
+    assert len(response_json) == default_breweries, f"The response length is {len(response_json)}!={default_breweries}"
+    for brewery in breweries_model:
+        assert isinstance(brewery, Brewery)
+
+
+@pytest.mark.smoke
 @pytest.mark.parametrize("input_city, per_page", [
     param("san diego", 3),
     param("norman", 3),
@@ -16,7 +50,7 @@ from jsonschema import validate
     param("el reno", 1),
     param("knoxville", 15),
 ])
-def test_list_breweries_by_city(brewery_base_url, input_city, per_page):
+def test_list_breweries_by_city(brewery_base_url, input_city: str, per_page: int):
     response = requests.get(
         brewery_base_url,
         params={
@@ -25,12 +59,16 @@ def test_list_breweries_by_city(brewery_base_url, input_city, per_page):
         }
     )
     response_json = response.json()
+    breweries_model = [Brewery(**brewery) for brewery in response_json]
     assert response.status_code == 200, f"The actual status code {response.status_code} != 200"
     assert len(response_json) == per_page, f"The response length is {len(response_json)} != {per_page}"
+    for brewery in breweries_model:
+        assert isinstance(brewery, Brewery)
     for brewery in response.json():
         assert input_city in brewery["city"].lower(), f"The city {input_city} not in city {brewery["city"]}"
 
 
+@pytest.mark.regression
 @pytest.mark.parametrize(
     "input_city, per_page", [
         param("san diego", 5),
@@ -49,7 +87,7 @@ def test_list_breweries_by_city(brewery_base_url, input_city, per_page):
     ]
 )
 def test_list_breweries_by_type_and_city(
-        brewery_base_url, input_state, input_city, input_brewery_type, per_page):
+        brewery_base_url, input_state: str, input_city: str, input_brewery_type: str, per_page: int):
     response = requests.get(
         brewery_base_url,
         params={
@@ -60,8 +98,11 @@ def test_list_breweries_by_type_and_city(
         }
     )
     response_json = response.json()
+    breweries_model = [Brewery(**brewery) for brewery in response_json]
     assert response.status_code == 200, f"The actual status code {response.status_code} != 200"
     assert len(response_json) <= 5, f"The response length is {len(response_json)} != {per_page}"
+    for brewery in breweries_model:
+        assert isinstance(brewery, Brewery)
     for brewery in response_json:
         assert input_brewery_type in brewery["brewery_type"].lower(), \
             f"The brewery_type{input_brewery_type} not in {brewery["brewery_type"]}"
@@ -69,45 +110,8 @@ def test_list_breweries_by_type_and_city(
         assert input_state in brewery["state"].lower(), f"The input_state{input_state} not in {brewery["state"]}"
 
 
-@pytest.mark.smoke
-def test_list_breweries_response_schema_validation(brewery_base_url):
-    response = requests.get(brewery_base_url)
-    response_json = response.json()
-
-    schema = {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-                "id": {"type": "string"},
-                "name": {"type": "string"},
-                "brewery_type": {"type": "string"},
-                "address_1": {"type": ["string", "null"]},
-                "address_2": {"type": ["string", "null"]},
-                "address_3": {"type": ["string", "null"]},
-                "state_province": {"type": ["string", "null"]},
-                "postal_code": {"type": ["string", "null"]},
-                "country": {"type": "string"},
-                "longitude": {"type": ["string", "null"]},
-                "latitude": {"type": ["string", "null"]},
-                "phone": {"type": ["string", "null"]},
-                "website_url": {"type": ["string", "null"]},
-                "state": {"type": ["string", "null"]},
-                "street": {"type": ["string", "null"]}
-            },
-            "required": [
-                "id", "name", "brewery_type", "address_1", "state_province", "postal_code",
-                "country", "longitude", "latitude", "phone", "website_url", "state", "street"
-            ]
-        }
-    }
-
-    validate(instance=response_json, schema=schema)
-    assert response.status_code == 200, f"The actual status code {response.status_code} != 200"
-
-
 @pytest.mark.regression
-def test_search_breweries(brewery_base_url):
+def test_search_breweries_by_city(brewery_base_url):
     city = "san diego"
     per_page = 50
     response = requests.get(
@@ -118,12 +122,16 @@ def test_search_breweries(brewery_base_url):
         }
     )
     response_json = response.json()
+    breweries_model = [Brewery(**brewery) for brewery in response_json]
     assert response.status_code == 200, f"The actual status code {response.status_code} != 200"
     assert len(response_json) <= 50, f"The actual response length {len(response_json)} != {per_page}"
+    for brewery in breweries_model:
+        assert isinstance(brewery, Brewery)
     for brewery in response_json:
         assert brewery["city"].lower() == city, f"The expected city {city} not in {brewery["city"]}"
 
 
+@pytest.mark.regression
 @pytest.mark.parametrize(
     "input_per_page, output_per_page", [
         (1, 1),
@@ -133,7 +141,7 @@ def test_search_breweries(brewery_base_url):
         (201, 200)
     ], ids=["per_page=1", "per_page=100", "per_page=199", "per_page=200", "per_page=201"]
 )
-def test_boundary_analysis_per_page(brewery_base_url, input_per_page, output_per_page):
+def test_boundary_analysis_brewery_per_page(brewery_base_url, input_per_page: int, output_per_page: int):
     response = requests.get(
         brewery_base_url,
         params={
@@ -141,11 +149,15 @@ def test_boundary_analysis_per_page(brewery_base_url, input_per_page, output_per
         }
     )
     response_json = response.json()
+    breweries_model = [Brewery(**brewery) for brewery in response_json]
     assert response.status_code == 200, f"The status code is {response.status_code} != 200"
     assert len(response_json) == output_per_page, \
         f"The actual response length {len(response_json)} != expected {output_per_page}"
+    for brewery in breweries_model:
+        assert isinstance(brewery, Brewery)
 
 
+@pytest.mark.regression
 @pytest.mark.parametrize(
     "brewery_id_4, brewery_id_5, brewery_id_6", [
         param(
@@ -189,6 +201,7 @@ def test_get_breweries_by_ids(
         }
     )
     response_json = response.json()
+    breweries_model = [Brewery(**brewery) for brewery in response_json]
     expected_ids = {
         brewery_id_1, brewery_id_2, brewery_id_3, brewery_id_4, brewery_id_5, brewery_id_6
     }
@@ -196,4 +209,6 @@ def test_get_breweries_by_ids(
     assert response.status_code == 200, f"The status code {response.status_code} != 200"
     assert len(response_json) == len(expected_ids), \
         f"The actual response length {len(response_json)} != expected {len(expected_ids)}"
+    for brewery in breweries_model:
+        assert isinstance(brewery, Brewery)
     assert actual_ids == expected_ids, f"The actual ids {actual_ids} != expected ids {expected_ids}"

@@ -40,7 +40,7 @@ class Users(BaseModel):
     company: UserCompany
 
 
-@pytest.mark.regression
+@pytest.mark.smoke
 def test_get_posts_validation(placeholder_base_url):
     response = requests.get(f"{placeholder_base_url}/posts")
     response_json = response.json()
@@ -61,6 +61,7 @@ def test_get_users_validation(placeholder_base_url):
         assert isinstance(user, Users)
 
 
+@pytest.mark.smoke
 @pytest.mark.parametrize(
     "payload", [
         {
@@ -99,6 +100,7 @@ def test_create_user_post(placeholder_base_url, payload):
         f"The actual userId {response_json['userId']} != expected userId {payload['userId']}"
 
 
+@pytest.mark.regression
 @pytest.mark.parametrize(
     "payload", [
         {
@@ -140,6 +142,7 @@ def test_update_user_post(placeholder_base_url, payload):
         f"The actual userId {response_json['userId']} != expected userId {payload['userId']}"
 
 
+@pytest.mark.regression
 @pytest.mark.parametrize(
     "payload, post_number", [
         ({"title": "my title1"}, 1),
