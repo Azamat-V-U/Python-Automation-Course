@@ -2,8 +2,7 @@ import pytest
 import requests
 from pytest import param
 from pydantic import BaseModel, Field
-from typing import Dict, List, Union, Optional
-from jsonschema import validate
+from typing import Optional
 
 
 class Brewery(BaseModel):
