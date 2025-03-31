@@ -1,29 +1,8 @@
 import pytest
 import requests
 from pytest import param
-from pydantic import BaseModel
-from typing import Dict, List, Union
 from hw_4.test_data.test_data import expected_data
-
-
-class AllBreeds(BaseModel):
-    message: Union[Dict[str, List[str]], List[str], str]
-    status: str
-
-
-class BreedsList(BaseModel):
-    message: Dict[str, List[str]]
-    status: str
-
-
-class ByBreed(BaseModel):
-    message: List[str]
-    status: str
-
-
-class RandomBreed(BaseModel):
-    message: str
-    status: str
+from hw_4.response_models.dogs_models import AllBreeds, BreedsList, RandomBreed, ByBreed
 
 
 def id_val(val):
@@ -38,25 +17,21 @@ def test_get_dogs_endpoints(data, dogs_base_url):
     expected_content_type = data[3]
     response = requests.get(url=endpoint)
     response_json = response.json()
-    breeds_model = AllBreeds(**response_json)
     assert response.status_code == eval(expected_status_code), \
         f"The actual status code {response.status_code} != expected {expected_status_code}"
+    AllBreeds(**response_json)
     assert response.headers["Content-Type"] == expected_content_type, \
         f"The actual content-type is {response.headers["Content-Type"]}"
-    assert len(response_json) > 0, f"The actual response length is {len(response_json)}"
-    assert isinstance(breeds_model, AllBreeds)
 
 
 @pytest.mark.smoke
 def test_schema_validation_list_all_breeds(dogs_base_url):
     response = requests.get(f"{dogs_base_url}/breeds/list/all")
     response_json = response.json()
-    breeds_model = BreedsList(**response_json)
     assert response.status_code == 200, f"The status code {response.status_code} != 200"
+    BreedsList(**response_json)
     assert response.headers["Content-Type"] == "application/json", \
         f"The actual content-type is {response.headers["Content-Type"]}"
-    assert len(response_json) > 0, f"The actual response length is {len(response_json)}"
-    assert isinstance(breeds_model, BreedsList)
 
 
 @pytest.mark.regression
@@ -68,13 +43,11 @@ def test_schema_validation_list_all_breeds(dogs_base_url):
 def test_schema_validation_random_breed(dogs_base_url, endpoint, expected_status_code):
     response = requests.get(dogs_base_url + endpoint)
     response_json = response.json()
-    breeds_model = RandomBreed(**response_json)
     assert response.status_code == expected_status_code, \
         f"The actual status code {response.status_code} != expected {expected_status_code}"
+    RandomBreed(**response_json)
     assert response.headers["Content-Type"] == "application/json", \
         f"The actual content-type is {response.headers["Content-Type"]}"
-    assert len(response_json) > 0, f"The actual response length is {len(response_json)}"
-    assert isinstance(breeds_model, RandomBreed)
 
 
 @pytest.mark.regression
@@ -86,13 +59,11 @@ def test_schema_validation_random_breed(dogs_base_url, endpoint, expected_status
 def test_response_schema_validation_breed_list(dogs_base_url, endpoint, expected_status_code):
     response = requests.get(dogs_base_url + endpoint)
     response_json = response.json()
-    breed_model = ByBreed(**response_json)
     assert response.status_code == expected_status_code, \
         f"The actual status code {response.status_code} != expected {expected_status_code}"
+    ByBreed(**response_json)
     assert response.headers["Content-Type"] == "application/json", \
         f"The actual content-type is {response.headers["Content-Type"]}"
-    assert len(response_json) > 0, f"The actual response length is {len(response_json)}"
-    assert isinstance(breed_model, ByBreed)
 
 
 @pytest.mark.regression
