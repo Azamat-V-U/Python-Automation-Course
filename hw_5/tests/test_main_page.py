@@ -79,7 +79,7 @@ def test_search_for_product(browser, base_url):
     browser.get(base_url)
     wait = WebDriverWait(browser, timeout=5)
     search_btn = wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, ".form-control-lg")
+        MainPage.search_field
     ))
     search_btn.send_keys(item)
     search_btn.send_keys(Keys.ENTER)

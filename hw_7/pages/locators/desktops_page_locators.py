@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from selenium.webdriver.common.by import By
 
 
-class Desktops:
+@dataclass
+class DesktopsLoc:
     desktops_links = (By.XPATH, "(//div[@class='list-group mb-3'])/a")
     breadcrumb_link = (By.XPATH, "(//ul[@class='breadcrumb']//a[contains(text(), 'Desktops')])")
     product_header = (By.XPATH, "//div[@class='col-sm']/h1")

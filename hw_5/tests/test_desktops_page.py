@@ -61,9 +61,9 @@ def test_product_name_verification(browser, base_url):
     browser.get(base_url)
     wait = WebDriverWait(browser, timeout=4)
     wait.until(EC.visibility_of_element_located(
-        Desktops.mac_button
+        Desktops.mac_link
     ))
-    browser.find_element(*Desktops.mac_button).click()
+    browser.find_element(*Desktops.mac_link).click()
     product_name = wait.until(EC.visibility_of_element_located(
         Desktops.item_name
     ))

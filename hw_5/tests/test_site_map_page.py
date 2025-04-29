@@ -10,7 +10,7 @@ def test_breadcrumbs_verification(browser, base_url):
 
     wait = WebDriverWait(browser, timeout=5)
     wait.until(EC.visibility_of_element_located(
-        SiteMap.breadcrumb
+        SiteMap.breadcrumb_link
     ))
     breadcrumb_link = browser.find_element(*SiteMap.breadcrumb_link)
     assert breadcrumb_link.is_displayed() == True
@@ -30,29 +30,15 @@ def test_header_name_verification(browser, base_url):
 def test_item_names_1(browser, base_url):
     expected_link_list = [
         "desktops", "laptops & notebooks", "components", "tablets",
-        "software", "phones & pdas", "cameras", "mp3 players"
-    ]
-    browser.get(base_url)
-    wait = WebDriverWait(browser, timeout=5)
-    wait.until(EC.visibility_of_element_located(
-        SiteMap.catalog_links1
-    ))
-    catalog_links = browser.find_elements(*SiteMap.catalog_links1)
-    for link in catalog_links:
-        link = link.text.strip().lower()
-        assert link in expected_link_list, f"The actual link name '{link}' not in expected items {expected_link_list}"
-
-
-def test_item_names_2(browser, base_url):
-    expected_link_list = [
+        "software", "phones & pdas", "cameras", "mp3 players",
         "special offers", "my account", "shopping cart", "checkout", "search"
     ]
     browser.get(base_url)
     wait = WebDriverWait(browser, timeout=5)
     wait.until(EC.visibility_of_element_located(
-        SiteMap.catalog_links2
+        SiteMap.sitemap_links
     ))
-    catalog_links = browser.find_elements(*SiteMap.catalog_links2)
+    catalog_links = browser.find_elements(*SiteMap.sitemap_links)
     for link in catalog_links:
         link = link.text.strip().lower()
         assert link in expected_link_list, f"The actual link name '{link}' not in expected items {expected_link_list}"
@@ -80,7 +66,7 @@ def test_information_link_names_verification(browser, base_url):
     browser.get(base_url)
     wait = WebDriverWait(browser, timeout=4)
     wait.until(EC.visibility_of_element_located(
-        SiteMap.information_list
+        SiteMap.information_links
     ))
     catalog_links = browser.find_elements(*SiteMap.information_links)
     link_name_list = [link.text.lower().strip() for link in catalog_links]
