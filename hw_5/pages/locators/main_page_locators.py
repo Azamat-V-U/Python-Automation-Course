@@ -2,11 +2,17 @@ from selenium.webdriver.common.by import By
 
 
 class MainPage:
-    add_to_wishlist = (By.XPATH, "//div[@class='col mb-3'][1]//button[@type='submit'][2]")
+    add_to_wishlist = (
+        By.XPATH, "//div[contains(@class, 'product-thumb')][.//a[text()='MacBook']]//i[@class='fa-solid fa-heart']"
+    )
     actual_message = (By.CSS_SELECTOR, ".alert-dismissible")
-    add_to_cart_btn = (By.XPATH, "//div[@class='col mb-3'][1]//button[@type='submit'][1]")
+    add_to_cart_btn = (
+        By.XPATH, "//div[contains(@class, 'product-thumb')][.//a[text()='MacBook']]"
+                  "//i[@class='fa-solid fa-shopping-cart']"
+    )
     dropdown = (By.CSS_SELECTOR, ".btn-block.dropdown-toggle")
-    pound_sterling_currency = (By.XPATH, "//ul[@class='dropdown-menu show']/li[2]")
-    pound_sterling_sign = (By.XPATH, "//div[@class='dropdown']/a[1]")
+    pound_sterling_currency = (By.XPATH, "//li/a[@href='GBP']")
+    pound_sterling_sign = (By.XPATH, "//a[contains(@href,'#') and contains(@class,'dropdown-toggle')]")
+    search_field = (By.CSS_SELECTOR, ".form-control-lg")
     catalog_names = (By.XPATH, "(//ul[@class='nav navbar-nav']/li)")
-    macbook_link = (By.XPATH, "(//h4/a[@href='http://localhost/en-gb/product/macbook'])")
+    macbook_link = (By.XPATH, "//a[contains(text(), 'MacBook')]")
