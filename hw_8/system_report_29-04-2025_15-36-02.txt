@@ -1,0 +1,32 @@
+Отчет о состоянии системы:
+Node: qap
+Processor: x86_64
+System: Linux
+CPU: 2
+Release: 5.4.0-169-generic
+Version: #187-Ubuntu SMP Thu Nov 23 14:52:28 UTC 2023
+
+Пользователи системы:
+Azamat_V, daemon, do-agent, jenkins, message+, root, syslog, systemd+, uuidd
+
+Процессов запущено:  114
+
+Пользовательских процессов:
+
+Azamat_V : 7
+daemon : 1
+do-agent : 1
+jenkins : 2
+message+ : 1
+root : 97
+syslog : 1
+systemd+ : 3
+uuidd : 1
+
+Всего памяти используется : 26.5%
+
+Всего CPU используется : 99.9%
+
+Больше всего памяти использует : (/tmp/zpTIw)
+
+Больше всего CPU использует : (/tmp/zpTIw)
